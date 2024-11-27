@@ -1,0 +1,15 @@
+node_modules
+/lib
+/dist
+/src/assets/locales
+/src/mocks
+test
+e2e
+scripts
+*.min.js
+*.min.ts
+*.min.tsx
+*.test.js
+*.test.ts
+*.test.tsx
+*.spec.*
