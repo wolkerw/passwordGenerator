@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
 
-import { Image, StyleSheet, TouchableOpacity, View, Text } from 'react-native'
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  Clipboard,
+} from 'react-native'
 
 import Slider from '@react-native-community/slider'
 
@@ -9,29 +16,43 @@ import ParallaxScrollView from '@/components/ParallaxScrollView'
 import { ThemedText } from '@/components/ThemedText'
 import { ThemedView } from '@/components/ThemedView'
 
+const charset = 'abcdefghijklmnopqrstuvwxyz0123456789'
+
+const copyToClipboard = (textToBeCopied: string) => {
+  Clipboard.setString(textToBeCopied)
+}
+
 export default function HomeScreen() {
+  const [carartersSize, setCarartersSize] = useState(10)
+  const [passwordValue, setPasswordValue] = useState('')
+
+  const generatePassword = () => {
+    let password = ''
+    for (let i = 0, n = charset.length; i < carartersSize; i++) {
+      password += charset.charAt(Math.floor(Math.random() * n))
+    }
+
+    setPasswordValue(password)
+    copyToClipboard(password)
+  }
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
+          source={require('@/assets/images/padlock.png')}
           resizeMode="center"
           style={styles.reactLogo}
         />
       }
     >
-      <Image
-        source={require('@/assets/images/padlock.png')}
-        style={styles.padlock}
-      />
 
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">20 cararters</ThemedText>
+        <ThemedText type="title">{carartersSize} cararters</ThemedText>
         <HelloWave />
       </ThemedView>
 
-      {/* <ThemedView style={styles.titleContainer}> */}
       <View
         style={{
           display: 'flex',
@@ -44,49 +65,22 @@ export default function HomeScreen() {
           minimumValue={6}
           maximumValue={20}
           maximumTrackTintColor="#b50000"
+          value={carartersSize}
+          onValueChange={(value) =>
+            setCarartersSize(parseInt(value).toFixed(0))
+          }
         />
 
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Generate password</Text>
+          <Text style={styles.buttonText} onPress={() => generatePassword()}>
+            Generate and copy password
+          </Text>
         </TouchableOpacity>
       </View>
-      {/* </ThemedView> */}
 
-      {/* <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText type="subtitle">{passwordValue}</ThemedText>
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView> */}
     </ParallaxScrollView>
   )
 }
@@ -99,9 +93,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
+    height: 200,
+    width: '100%',
+    top: 25,
     left: 0,
     position: 'absolute',
   },
@@ -111,7 +105,7 @@ const styles = StyleSheet.create({
     marginBottom: 60,
     marginLeft: 'auto',
     marginRight: 'auto',
-    marginTop: 30
+    marginTop: 30,
   },
   button: {
     width: '80%',
@@ -121,10 +115,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 8,
     marginTop: 12,
-    marginBottom: 30
+    marginBottom: 30,
   },
   buttonText: {
     color: 'white',
-    fontSize: 18
+    fontSize: 18,
   },
 })
